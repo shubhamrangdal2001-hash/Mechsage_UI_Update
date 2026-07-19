@@ -1,100 +1,140 @@
-# Mech Sage — Stage 5: Data Decision & Dataset Strategy
+# MechSage — Agentic Predictive Maintenance Copilot
 
-> **Stage:** 5 (Data) · builds on the Stage 3 design and PRD v1.0
-> **Project:** Mech Sage — agentic predictive-maintenance copilot for Ironside Manufacturing
-> **Owner:** Ayush Patil (Reliability & Data) · reviewed by Sudhanshu & Shubham
-> **Status:** Draft for review
+MechSage is a production-grade, full-stack predictive maintenance application for Turbofan Engine Units. It integrates machine learning (RUL prognosis & Isolation Forest anomaly detection) with a LangGraph multi-agent diagnostic workflow and a Retrieval-Augmented Generation (RAG) technical manuals search engine, exposed through a high-frequency real-time dashboard.
 
 ---
 
-## 0. What this folder contains
+## 🏗️ System Architecture
 
-| File | Purpose |
-|---|---|
-| `README.md` (this file) | **Why** we chose the datasets we did, and the reasoning behind every call |
-| `datacard_cmapss.md` | Data card — NASA C-MAPSS (FD001–FD004) **[PRIMARY]** |
-| `datacard_ncmapss.md` | Data card — N-CMAPSS (DS01–DS08) **[STRETCH]** |
-| `datacard_ai4i2020.md` | Data card — AI4I 2020 Predictive Maintenance **[PROTOTYPING]** |
-| `pros_and_cons.md` | Side-by-side pros/cons + the final decision matrix |
+```mermaid
+flowchart TD
+    subgraph FE["🖥️ Frontend — Next.js 14 App Router (TypeScript)"]
+        P1["/fleet\n(Live KPI Cards + Engine Grid)"]
+        P2["/engines/[id]\n(RUL Trajectory + SHAP + Anomaly Charts)"]
+        P3["/workorders\n(Work Order Table + HITL Queue)"]
+        P4["/rag\n(RAG Manuals Search Console)"]
+        P5["/agent\n(Agent Run Trace Viewer)"]
+      style FE fill:#0A0F1E,stroke:#3B82F6,stroke-width:2px;
+    end
 
----
+    subgraph BE["🔌 Backend — FastAPI"]
+        R1["POST /api/v1/infer\n(cycle prediction)"]
+        R2["POST /api/v1/agent/run\n(5-node LangGraph execution)"]
+        R3["POST /api/v1/rag/query\n(hybrid RAG + rerank)"]
+        R4["GET|PATCH /api/v1/workorders\n(CRUD + HITL approval)"]
+        R5["GET /api/v1/metrics\n(fleet health JSON)"]
+        WS["WebSocket /ws/fleet\n(real-time push)"]
+      style BE fill:#111827,stroke:#00D4AA,stroke-width:2px;
+    end
 
-## 1. What we actually need from a dataset
+    subgraph CORE["⚙️ Existing Core ML/Agent Layers"]
+        INF["inference/predictor.py\n(8 loaded .joblib models)"]
+        AG["dev/agentic/graph.py\n(mechsage_graph)"]
+        RAG["dev/rag/rag_pipeline.py\n(dense + sparse retrieval)"]
+    end
 
-Mech Sage predicts **how much life a machine has left (RUL)** and explains **why**, then drafts a work order. So the dataset has to support that exact loop. Our hard requirements:
+    subgraph DB["💾 Persistence"]
+        SQL["SQLite (dev) / PostgreSQL (prod)\nWorkOrder, HITLEvent, AuditLog"]
+        CHROMA["ChromaDB\nRAG vector store"]
+    end
 
-1. **Run-to-failure trajectories** — we need machines that degrade over time until they fail, not just a snapshot. RUL is meaningless without the full life history.
-2. **Multivariate sensor time-series** — multiple sensors per machine over time, so the anomaly + RUL model has real signal to learn from.
-3. **A clear, derivable RUL label** — we must be able to compute "cycles remaining until failure" for supervised training.
-4. **Manageable size & compute** — this is a capstone on free tiers; the data must train on a laptop / free cloud, not a GPU cluster.
-5. **Well-documented & citable** — a recognised PHM benchmark so our results are comparable and credible.
-6. **A realistic story for an industrial client** — it should plausibly stand in for Ironside's rotating equipment.
-
----
-
-## 2. The decision (TL;DR)
-
-> **Primary dataset: NASA C-MAPSS (FD001–FD004).**
-> **Stretch/realism dataset: N-CMAPSS.**
-> **Prototyping/smoke-test dataset: AI4I 2020.**
-
-We build and benchmark on **C-MAPSS** because it is the canonical RUL run-to-failure benchmark and hits every requirement above. We keep **N-CMAPSS** as a stretch goal for realism if time/compute allow, and use **AI4I 2020** early to smoke-test the *agent loop* (detect → diagnose → work order) before the real RUL model is ready.
-
----
-
-## 3. Why C-MAPSS is primary
-
-- ✅ **Purpose-built for RUL.** It is *the* benchmark for remaining-useful-life prediction — exactly our north-star (early-detection lead time).
-- ✅ **True run-to-failure.** Every engine unit runs from healthy to failure, so the RUL label is directly derivable (`max_cycle − current_cycle`).
-- ✅ **Rich but tabular-friendly.** 21 sensors + 3 operational settings per cycle — enough signal, but small enough to window and model on a laptop.
-- ✅ **Four difficulty tiers (FD001–FD004).** We can start on the easy single-condition/single-fault set (FD001) and scale to multi-condition/multi-fault (FD004) — perfect for an incremental capstone.
-- ✅ **Battle-tested & documented.** Used in the PHM08 challenge and hundreds of papers, so we have baselines (RUL RMSE, scoring function) to compare against.
-- ✅ **Right size.** Tens of MB, plain text — no data-engineering overhead steals time from the agent work.
-
-## 4. Why N-CMAPSS is the stretch dataset (not primary)
-
-- ➕ **Far more realistic** — full flight envelopes, real degradation modelling, more sensors.
-- ➖ **Heavy** — multi-GB HDF5 files; training is slow on free tiers and would eat the sprint.
-- ➖ **Overkill for a v1 demo** — the extra realism doesn't change the agent architecture; it just raises the compute bill.
-- **Verdict:** ideal "if we have time" upgrade to show the design generalises; not where we start.
-
-## 5. Why AI4I 2020 is for prototyping only
-
-- ➕ **Tiny & instant** — 10k rows, plain CSV, trains in seconds.
-- ➕ **Great for wiring the agent loop early** — we can exercise detect → diagnose → draft-work-order before the real RUL model exists.
-- ➖ **Not run-to-failure** — it's a *classification* dataset (will it fail / failure type), not RUL trajectories.
-- ➖ **Synthetic & shallow** — no time-series degradation to learn lead time from.
-- **Verdict:** a scaffolding/smoke-test dataset, never the headline benchmark.
+    FE -->|REST + WebSocket| BE
+    BE --> INF
+    BE --> AG
+    BE --> RAG
+    AG --> SQL
+    R4 --> SQL
+    RAG --> CHROMA
+```
 
 ---
 
-## 6. How the datasets map to the build
+## 🛠️ Technology Stack
 
-| Need | Dataset we use | Why |
-|---|---|---|
-| Train the RUL/anomaly model | **C-MAPSS** | Real run-to-failure trajectories + RUL labels |
-| Prove the design generalises (stretch) | **N-CMAPSS** | Realistic flight data, more fault modes |
-| Smoke-test the agent loop early | **AI4I 2020** | Tiny, instant, end-to-end in minutes |
-| Report headline metrics (Stage 7) | **C-MAPSS** | Comparable to published baselines |
-
----
-
-## 7. Stage 5 data tasks (per roadmap)
-
-- [ ] Download C-MAPSS FD001–FD004 (and AI4I 2020 for prototyping)
-- [ ] Clean + window into features; engineer the RUL label (with a clip cap, e.g. RUL capped at 125)
-- [ ] Time-ordered train/val/test split (guard against leakage — see Stage 4 R6)
-- [ ] Baseline EDA: sensor trends vs RUL, which sensors actually signal degradation
-- [ ] Write dataset cards (this folder) + record measured stats to replace PRD §9 `TBD` baselines
+* **Backend**: FastAPI (Python 3.11), SQLAlchemy, Uvicorn, Structlog, Pydantic v2.
+* **Frontend**: Next.js 14 (App Router, React 19, TypeScript), TailwindCSS, Recharts, Zustand, TanStack Query v5.
+* **Database**: SQLite (Local Dev) / PostgreSQL (Production).
+* **Machine Learning**: Scikit-Learn, LightGBM (Anomaly Detection & RUL prediction).
+* **DevOps**: Docker, Docker Compose, GitHub Actions.
 
 ---
 
-## 8. Key risks carried from Stage 4
+## 🚀 Getting Started
 
-- **R6 Data leakage** — strict time-ordered splits; windows must never cross the failure boundary.
-- **R1 Missed failure** — tune for recall; this is measured on the C-MAPSS held-out test set in Stage 7.
-- **Single-dataset acceptance** — we knowingly accept that the demo trains on turbofan data, not Ironside's real fleet (documented accepted risk).
+### 1. Pre-requisites
+* Python 3.11+
+* Node.js 20+
+* Docker & Docker Compose (optional, for containerized run)
+
+### 2. Environment Variables Configuration
+Copy `.env.example` to `.env` and fill in your details:
+```bash
+cp .env.example .env
+```
+Key configuration settings:
+* `LLM_PROVIDER`: `openai` | `gemini`
+* `OPENAI_API_KEY` or `GOOGLE_API_KEY`: Required for LangGraph/RAG generation.
+* `DATABASE_URL`: `sqlite:///./mechsage.db` (default)
+* `REQUIRE_API_KEY`: `false` (set to `true` to enable X-API-Key header authentication)
 
 ---
 
-*Feeds Stage 6 (Build — model training) and Stage 7 (Verify — metrics on held-out data).*
+## 💻 Local Development Setup
+
+### 1. Start the FastAPI Backend
+From the root directory:
+```bash
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Run the server (auto-creates database tables & loads model artifacts)
+uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
+Swagger API docs will be available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+### 2. Start the Next.js Frontend
+From the `frontend` directory:
+```bash
+# Install dependencies
+npm install
+
+# Run the development server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the live dashboard.
+
+---
+
+## 🐳 Docker Orchestration
+
+You can build and spin up the entire full-stack application using a single command:
+```bash
+docker-compose up --build
+```
+This launches:
+* **Backend API**: [http://localhost:8000](http://localhost:8000)
+* **Frontend UI**: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🧪 Running Verification Tests
+
+### 1. Backend Pytest Suite
+Run unit tests, including inference schemas, database CRUD, and RAG guardrail verifications:
+```bash
+pytest backend/tests/ --cov=backend
+```
+
+### 2. Frontend Unit Tests
+Verify MetricCard layout renders and handles props properly:
+```bash
+cd frontend
+npm run test
+```
+
+### 3. Playwright E2E Tests
+Validate redirect logic and fleet dashboard card clicks:
+```bash
+cd frontend
+npx playwright test
+```
