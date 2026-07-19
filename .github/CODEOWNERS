@@ -1,0 +1,9 @@
+# Replace or extend owners as the maintainer team grows.
+* @shubh
+
+/.github/ @shubh
+/backend/ @shubh
+/frontend/ @shubh
+/inference/ @shubh
+/dev/rag/ @shubh
+/dev/agentic/ @shubh

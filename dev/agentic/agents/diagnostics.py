@@ -40,7 +40,7 @@ def _get_model() -> genai.GenerativeModel:
         model_name=_config.strong_model,
         system_instruction=textwrap.dedent("""\
             You are the Diagnostics Engine for MechSage, a predictive-maintenance
-            AI for industrial turbofan engines.
+            AI for Ironside Manufacturing industrial assets.
 
             You receive:
             - ML telemetry signals (RUL estimate, anomaly flags, degrading sensors)

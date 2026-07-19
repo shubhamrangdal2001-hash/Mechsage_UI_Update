@@ -355,6 +355,31 @@ class TestPipelineSingleton:
 class TestEmbeddingShape:
     """Tests for edge cases in dev.rag.embedding.EmbeddingModel."""
 
+    @pytest.fixture(autouse=True)
+    def deterministic_sentence_transformer(self, monkeypatch):
+        """Avoid network/model-cache dependence while exercising wrapper logic."""
+        import numpy as np
+        import sentence_transformers
+
+        class FakeSentenceTransformer:
+            def __init__(self, model_name):
+                self.model_name = model_name
+
+            def get_sentence_embedding_dimension(self):
+                return 4
+
+            def encode(self, texts, show_progress_bar=False, normalize_embeddings=True):
+                vectors = np.array(
+                    [[len(text), 1.0, 2.0, 3.0] for text in texts], dtype=np.float32
+                )
+                if normalize_embeddings:
+                    vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
+                return vectors
+
+        monkeypatch.setattr(
+            sentence_transformers, "SentenceTransformer", FakeSentenceTransformer
+        )
+
     def test_embed_empty_list_returns_correct_shape(self):
         """embed([]) must return shape (0, dim) not (0,) — downstream code expects 2-D arrays."""
         from dev.rag.embedding import EmbeddingModel

@@ -1210,3 +1210,71 @@ mlflow.exceptions.MlflowException: The saved sklearn model references untrusted 
 2026-07-06 18:24:25,472 | INFO | mechsage.main | Final report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\final_report_FD001.md
 2026-07-06 18:24:25,472 | INFO | mechsage.main | View MLflow with: mlflow ui --backend-store-uri ./mlruns
 2026-07-06 18:24:25,472 | INFO | mechsage.main | MLflow URL: http://127.0.0.1:5000
+2026-07-16 14:43:24,482 | INFO | mechsage.main | Logging initialized: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\logs\pipeline.log
+2026-07-16 14:43:24,482 | INFO | mechsage.main | Logging initialized: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\logs\pipeline.log
+2026-07-16 14:43:25,037 | INFO | mechsage.pipeline | Preparing data for dataset FD002
+2026-07-16 14:43:25,043 | INFO | mechsage.pipeline | Preparing data for dataset FD003
+2026-07-16 14:43:25,044 | INFO | mechsage.pipeline | Preparing data for dataset FD004
+2026-07-16 14:43:25,050 | INFO | mechsage.pipeline | Preparing data for dataset FD001
+2026-07-16 14:43:40,289 | WARNING | mechsage.pipeline | Data validation warning [train]: IQR outliers detected in 124 numeric columns
+2026-07-16 14:43:40,315 | WARNING | mechsage.pipeline | Data validation warning [validation]: IQR outliers detected in 106 numeric columns
+2026-07-16 14:43:40,315 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 127 numeric columns
+2026-07-16 14:43:40,315 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD001.json
+2026-07-16 14:43:40,321 | WARNING | mechsage.pipeline | Data validation warning [train]: IQR outliers detected in 128 numeric columns
+2026-07-16 14:43:40,339 | WARNING | mechsage.pipeline | Data validation warning [validation]: IQR outliers detected in 119 numeric columns
+2026-07-16 14:43:40,339 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 129 numeric columns
+2026-07-16 14:43:40,339 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD003.json
+2026-07-16 14:43:40,663 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD001.csv
+2026-07-16 14:43:40,663 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 14:43:40,664 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD003.csv
+2026-07-16 14:43:40,671 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 14:44:20,778 | WARNING | mechsage.pipeline | Data validation warning [train]: IQR outliers detected in 107 numeric columns
+2026-07-16 14:44:20,835 | WARNING | mechsage.pipeline | Data validation warning [validation]: IQR outliers detected in 106 numeric columns
+2026-07-16 14:44:20,835 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 107 numeric columns
+2026-07-16 14:44:20,835 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 108 numeric columns
+2026-07-16 14:44:20,837 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD004.json
+2026-07-16 14:44:20,837 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD002.json
+2026-07-16 14:44:21,702 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD002.csv
+2026-07-16 14:44:22,095 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD004.csv
+2026-07-16 14:44:22,346 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 14:44:22,351 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 14:45:58,195 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 14:45:58,205 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 14:45:58,219 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 14:45:58,232 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 14:48:14,420 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 14:48:15,686 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 14:50:42,112 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 14:50:45,056 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 14:50:47,258 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: grid, random, optuna
+2026-07-16 14:50:47,257 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: grid, random, optuna
+2026-07-16 14:50:47,616 | INFO | mechsage.tuning | [grid/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds
+2026-07-16 14:50:47,618 | INFO | mechsage.tuning | [grid/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds
+2026-07-16 14:54:14,887 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: grid, random, optuna
+2026-07-16 14:54:15,362 | INFO | mechsage.tuning | [grid/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds
+2026-07-16 14:57:23,224 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: grid, random, optuna
+2026-07-16 14:57:23,796 | INFO | mechsage.tuning | [grid/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds
+2026-07-16 15:00:42,986 | INFO | mechsage.main | Logging initialized: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\logs\pipeline.log
+2026-07-16 15:00:43,169 | INFO | mechsage.pipeline | Preparing data for dataset FD004
+2026-07-16 15:01:21,852 | WARNING | mechsage.pipeline | Data validation warning [train]: IQR outliers detected in 107 numeric columns
+2026-07-16 15:01:21,977 | WARNING | mechsage.pipeline | Data validation warning [validation]: IQR outliers detected in 106 numeric columns
+2026-07-16 15:01:21,977 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 108 numeric columns
+2026-07-16 15:01:21,977 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD004.json
+2026-07-16 15:01:22,720 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD004.csv
+2026-07-16 15:01:22,729 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 15:03:40,734 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 15:09:03,613 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 15:17:34,156 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: grid, random, optuna
+2026-07-16 15:17:34,608 | INFO | mechsage.tuning | [grid/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds
+2026-07-16 15:26:16,317 | INFO | mechsage.main | Logging initialized: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\logs\pipeline.log
+2026-07-16 15:26:16,676 | INFO | mechsage.pipeline | Preparing data for dataset FD001
+2026-07-16 15:26:37,855 | WARNING | mechsage.pipeline | Data validation warning [train]: IQR outliers detected in 124 numeric columns
+2026-07-16 15:26:37,855 | WARNING | mechsage.pipeline | Data validation warning [validation]: IQR outliers detected in 106 numeric columns
+2026-07-16 15:26:37,855 | WARNING | mechsage.pipeline | Data validation warning [test]: IQR outliers detected in 127 numeric columns
+2026-07-16 15:26:37,855 | INFO | mechsage.pipeline | Data validation report: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\reports\data_validation_FD001.json
+2026-07-16 15:26:37,952 | INFO | mechsage.pipeline | Split manifest saved: D:\Capstone\MechSage\NASA_CMAPSS_RUL_Project\artifacts\split_manifest_FD001.csv
+2026-07-16 15:26:37,952 | INFO | mechsage.pipeline | Training RUL model: LinearRegression
+2026-07-16 15:28:15,448 | INFO | mechsage.pipeline | Training RUL model: RandomForest
+2026-07-16 15:30:44,695 | INFO | mechsage.pipeline | Training RUL model: LightGBM
+2026-07-16 15:53:57,779 | INFO | mechsage.pipeline | Running hyperparameter tuning methods: random, optuna
+2026-07-16 15:53:59,075 | INFO | mechsage.tuning | [random/RandomForest] Group-fold validation passed — 0 engine overlap across 3 folds

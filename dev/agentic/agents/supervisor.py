@@ -38,7 +38,7 @@ def _get_model() -> genai.GenerativeModel:
         model_name=_config.cheap_model,
         system_instruction=textwrap.dedent("""\
             You are the Fleet Supervisor for MechSage, a predictive-maintenance
-            platform for industrial turbofan engines.
+            platform for Ironside Manufacturing industrial assets.
 
             Your job is to triage incoming telemetry alerts and decide which
             asset needs immediate attention. You do NOT diagnose faults — you
@@ -46,7 +46,7 @@ def _get_model() -> genai.GenerativeModel:
 
             Always respond in this exact format:
             ASSET_ID: <the asset identifier>
-            ASSET_TYPE: <turbofan | milling_machine | ironside>
+            ASSET_TYPE: ironside
             REASON: <one sentence explaining why this asset was prioritised>
         """),
     )
@@ -65,7 +65,7 @@ def supervisor_node(state: MechSageState) -> dict:
     # Fast path: asset already selected (demo / single-asset mode)
     # -------------------------------------------------------------------
     if state.get("asset_id") and state.get("raw_telemetry"):
-        asset_type = state.get("asset_type", "turbofan")
+        asset_type = state.get("asset_type", "ironside")
         print(f"[Supervisor] Asset pre-selected: {state['asset_id']} (type={asset_type})")
         return {
             "status": "supervisor_done",
@@ -96,7 +96,7 @@ def supervisor_node(state: MechSageState) -> dict:
         text = response.text.strip()
 
         # Parse the structured response
-        asset_id, asset_type, reason = "", "turbofan", ""
+        asset_id, asset_type, reason = "", "ironside", ""
         for line in text.splitlines():
             line = line.strip()
             if line.startswith("ASSET_ID:"):
