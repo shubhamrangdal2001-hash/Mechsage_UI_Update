@@ -16,6 +16,8 @@ env/
 .python-version
 
 # Raw/local datasets and packaged binaries
+
+# Raw/local datasets and packaged binaries
 data/
 *.zip
 *.db
@@ -30,12 +32,16 @@ NASA_CMAPSS_RUL_Project/catboost_info/
 NASA_CMAPSS_RUL_Project/data/
 NASA_CMAPSS_RUL_Project/notebooks/
 NASA_CMAPSS_RUL_Project/*.log
+ML/artifacts/
+ML/models/
+ML/mlruns/
+ML/catboost_info/
+ML/data/
+ML/notebooks/
+ML/*.log
+ML/logs/
 backend-live*.log
 inference/logs/
-
-# OS/editor noise
-.DS_Store
-Thumbs.db
 
 # RAG vector store (rebuilt automatically by evaluate_rag.py)
 dev/rag/chroma_db/

@@ -1,0 +1,13 @@
+{
+  "model_name": "RandomForest",
+  "version": "RandomForest-bb1be79f3434-2026-09-02T15:07:02+00:00",
+  "training_timestamp_utc": "2026-09-02T15:07:02+00:00",
+  "dataset_version": "bb1be79f3434",
+  "git_commit": "0eed8dedd2a550bd5a8d9711d98d520347e010e2",
+  "mlflow_run_id": "de72eac701fa44dcb3e64aa76a9f7a2e",
+  "task": "rul",
+  "main_metric": "RMSE",
+  "test_score": 15.559230510723175,
+  "local_model_path": "D:\\Capstone\\MechSage\\ML\\models\\best_rul_model_FD003.joblib",
+  "mlflow_model_artifact_path": "file:///D:/Capstone/MechSage/NASA_CMAPSS_RUL_Project/mlruns/478754518221550792/de72eac701fa44dcb3e64aa76a9f7a2e/artifacts/final_model"
+}
